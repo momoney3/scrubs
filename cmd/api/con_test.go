@@ -2,8 +2,7 @@ package main
 
 import "testing"
 
-
-func TestConv(t *testing.T)
+func TestConv(t *testing.T) {
 	num, err := conv("123456789")
 	if err != nil {
 		t.Fatal(err)
