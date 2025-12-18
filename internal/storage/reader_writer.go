@@ -2,32 +2,75 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"os"
+	"path/filepath"
 )
 
-func ReadWrite(f string) {
+type SearchOp struct {
+	number int
+	text   string
+}
+
+// ReadMem reads file from memery
+func ReadMem(dat string) (string, error) {
+	path := filepath.Join(dat)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, os.ErrPermission) {
+			return "", fmt.Errorf("permission failed: %w", err)
+		}
+		return "", fmt.Errorf("failed to open: %w", err)
+	}
+	return string(content), nil
+}
+
+// Reads reads big file
+// NOTE: Use spic to start reading from a serten part of the text
+func Reads(f string) (string, error) {
 	file, err := os.Open(f)
 	if err != nil {
-		log.Println("File failed to open:", err)
-		return
+		return "", fmt.Errorf("failed to Open: %w", err)
 	}
-	defer file.Close()
+
+	defer func() {
+		closErr := file.Close()
+		if err == nil {
+			err = closErr
+		}
+	}()
 
 	stat, err := file.Stat()
 	if err != nil {
-		log.Println("Stat fialed:", err)
-		return
+		return "", fmt.Errorf("stat failed: %w", err)
 	}
 
 	data := make([]byte, stat.Size())
 	numBytes, err := file.Read(data)
 	if err != nil {
-		log.Println("Read failed:", err)
-		return
+		return "", fmt.Errorf("read failed: %w", err)
 	}
 
-	fmt.Printf("read %d bytes\n", numBytes)
-	fmt.Println(string(data[:numBytes]))
+	content := string(data[:numBytes])
+
+	return content, err
 }
+
+func SearchLog(file, word string) (string, error) {
+	f, error := sear
+}
+
+// func fileExistis(f string) (bool, error) {
+// 	path, err := exec.LookPath(f)
+// 	if err != nil {
+// 		if errors.Is(err, exec.ErrDot) {
+// 			return true, nil
+// 		}
+// 		if errors.Is(err, exec.ErrNotFound) {
+// 			return false, nil
+// 		}
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
