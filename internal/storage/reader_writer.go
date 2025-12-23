@@ -8,11 +8,6 @@ import (
 	"path/filepath"
 )
 
-type SearchOp struct {
-	number int
-	text   string
-}
-
 // ReadMem reads file from memery
 func ReadMem(dat string) (string, error) {
 	path := filepath.Join(dat)
@@ -26,8 +21,8 @@ func ReadMem(dat string) (string, error) {
 	return string(content), nil
 }
 
-// Reads reads big file
-// NOTE: Use spic to start reading from a serten part of the text
+// Reads big file
+// NOTE: Seek to a known location in the file and Read from there
 func Reads(f string) (string, error) {
 	file, err := os.Open(f)
 	if err != nil {
@@ -57,8 +52,9 @@ func Reads(f string) (string, error) {
 	return content, err
 }
 
+// SearchLog use to search log file
 func SearchLog(file, word string) (string, error) {
-	f, error := sear
+	return "", nil
 }
 
 // func fileExistis(f string) (bool, error) {
