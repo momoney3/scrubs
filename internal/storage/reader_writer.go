@@ -54,6 +54,7 @@ func Reads(f string) (string, error) {
 
 // SearchLog use to search log file
 func SearchLog(file, word string) (string, error) {
+	fmt.Println("the is just a test")
 	return "", nil
 }
 
