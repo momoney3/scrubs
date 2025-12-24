@@ -53,6 +53,7 @@ func Reads(f string) (string, error) {
 }
 
 // SearchLog use to search log file
+// NOTE: Keeping the like  this for the time being
 func SearchLog(file, word string) (string, error) {
 	fmt.Println("the is just a test")
 	return "", nil
@@ -60,6 +61,7 @@ func SearchLog(file, word string) (string, error) {
 
 // func fileExistis(f string) (bool, error) {
 // 	path, err := exec.LookPath(f)
+//
 // 	if err != nil {
 // 		if errors.Is(err, exec.ErrDot) {
 // 			return true, nil
