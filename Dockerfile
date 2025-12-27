@@ -1,13 +1,18 @@
-FROM golang:1.25
-
+# Build stage
+FROM golang:1.25 AS build-stage
 WORKDIR /usr/src/app
-
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
 COPY go.mod go.sum ./
 RUN go mod download
-
 COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
+RUN CGO_ENABLED=0 GOOS=linux go build -o /usr/local/bin/app ./cmd/api
 
+# Run the tests in the container
+# FROM build-stage AS run-test-stage
+# RUN go test -v ./...
+
+# Run smaller image
+FROM alpine:3.23.2 AS build-release-stage
+WORKDIR /root/
+COPY --from=build-stage /usr/local/bin/app /usr/local/bin/app
+EXPOSE 8080
 CMD ["app"]
-
