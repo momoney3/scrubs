@@ -17,9 +17,16 @@ services:
     restart: always
 
     environment:
-      postgres_password: example
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: db
     volumes:
       - dbdata-scrub:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+    networks:
+      - scrub-network
 
 volumes:
   dbdata-scrub:
