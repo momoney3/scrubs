@@ -1,14 +1,16 @@
 package main
 
 import (
+	"math/rand"
 	"net/http"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
-	http.Handle("/metrics", prometheus.Handle())
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -40,5 +42,7 @@ func process() {
 
 	opsProcessed.Inc()
 
-	currentUsers.Set(float64(ra))
+	currentUsers.Set(float64(rand.Intn(100)))
+
+	requestDuration.Observe(time.Since(start).Seconds())
 }
