@@ -1,37 +1,44 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
-	"os"
+	"net/http"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 func main() {
-	fmt.Println("hello to you world.")
-	connStr := os.Getenv("DATABASE_URL")
+	http.Handle("/metrics", prometheus.Handle())
+	http.ListenAndServe(":8080", nil)
+}
 
-	if connStr == "" {
-		log.Fatal("DATABASE_URL environment variable is not set")
-	}
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+var opsProcessed = prometheus.NewCounter(prometheus.CounterOpts{
+	Name: "myapp",
+	Help: "the total number of processed events",
+})
 
-	rows, err := db.Query("SELECT usesysid, usename FROM pg_catalog.pg_user;")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
+// Define a Counter
+var currentUsers = prometheus.NewGauge(prometheus.GaugeOpts{
+	Name: "myapp_current_users",
+	Help: "Current number of active users",
+})
 
-	for rows.Next() {
-		var id int
-		var name string
-		if err := rows.Scan(&id, &name); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("User ID: %d, Name: %s \n", id, name)
-	}
+var requestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
+	Name:    "myapp_request_duration_seconds",
+	Help:    "Histogram of response time for handler",
+	Buckets: prometheus.DefBuckets,
+})
+
+func init() {
+	prometheus.MustRegister(opsProcessed)
+	prometheus.MustRegister(currentUsers)
+	prometheus.MustRegister(requestDuration)
+}
+
+func process() {
+	start := time.Now()
+
+	opsProcessed.Inc()
+
+	currentUsers.Set(float64(ra))
 }
