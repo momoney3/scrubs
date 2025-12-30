@@ -1,3 +1,4 @@
+// Package cli tools
 package tools
 
 import (
@@ -44,8 +45,8 @@ func FetchWithRetry(url string, attempts int, delay time.Duration) error {
 
 func CheckDependency(tool string) error {
 	_, err := exec.LookPath(tool)
-	if err := nil {
-		return fmt.Sprintf("%s not found in PATH", tool)
+	if err != nil {
+		return fmt.Errorf("%s not found in PATH", tool)
 	}
 	return nil
 }
